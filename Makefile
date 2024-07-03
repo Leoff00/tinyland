@@ -1,2 +1,4 @@
 run:
-	@go run cmd/main.go
+	@go run create_files.go main.go -$(dirName)
+
+.PHONY: run

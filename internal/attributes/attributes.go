@@ -1,4 +1,4 @@
-package main
+package attributes
 
 import (
 	"fmt"
@@ -8,19 +8,19 @@ import (
 	"strings"
 )
 
-type FilesTemplate struct {
-	DirName string
+type FilesAttributes struct {
+	//The whole project including go.mod, dir and self
+
+	Project string
 }
 
-func (f *FilesTemplate) truncateVersion() string {
-
+func (f *FilesAttributes) truncateVersion() string {
 	numbers := strings.Split(runtime.Version(), "go")
-
 	return strings.TrimLeft(strings.Join(numbers, ""), "")
 
 }
 
-func (f *FilesTemplate) CreateMakefileTemplate() {
+func (f *FilesAttributes) CreateMakefileTemplate() {
 
 	t := fmt.Sprintln(`
 run:
@@ -40,10 +40,10 @@ run:
 
 }
 
-func (f *FilesTemplate) CreateGoModTemplate() {
+func (f *FilesAttributes) CreateGoModTemplate() {
 	t := fmt.Sprintf(`module %s
-		
-go %s`, f.DirName, f.truncateVersion(),
+
+go %s`, f.Project, f.truncateVersion(),
 	)
 
 	file, err := os.Create("tmp/go.mod")
@@ -60,16 +60,16 @@ go %s`, f.DirName, f.truncateVersion(),
 
 }
 
-func (f *FilesTemplate) CreateMainTemplate() {
+func (f *FilesAttributes) CreateMainTemplate() {
 	t := fmt.Sprintln(`package main
 
 import "fmt"
-		 
+
 func main() {
 	fmt.Println("hello world")
 }`)
 
-	file, err := os.Create("tmp/main.go")
+	file, err := os.Create("tmp/cmd/main.go")
 
 	if err != nil {
 		log.Panicln("Erro during create file main.go", err.Error())
