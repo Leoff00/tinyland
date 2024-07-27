@@ -3,36 +3,40 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-
-	"github.com/leoff00/tinyland/internal/attributes"
 )
 
 const art string = `                                                                                                              
-★ ★ ★ ★ ★ WELCOME TO TINY ISLAND ★ ★ ★ ★ ★
+★ ★ ★ ★ ★ WELCOME TO TINYLAND ★ ★ ★ ★ ★
 `
 
 var (
 	project string
+	gpUrl   string
 )
 
 func main() {
 	fmt.Print(art)
 
 	flag.StringVar(&project, "project", "tinyland_example", "need to specify the name of the project.")
+	flag.StringVar(&gpUrl, "url", "github.com/tinyland_example", "need to specify your github project url")
 	flag.Parse()
 
-	attributes := attributes.FilesAttributes{
+	attributes := FilesAttributes{
 		Project: project,
+		GpUrl:   gpUrl,
+	}
+
+	if gpUrl != "" {
+		fmt.Printf("Setting configuration for %s \n", gpUrl)
 	}
 
 	if project != "" {
 		fmt.Printf("Setting default minimalist config with %s \n", project)
-		os.Mkdir("tmp/cmd", 0777)
 
+		attributes.CreateRootFolder()
 		attributes.CreateGoModTemplate()
-		attributes.CreateMainTemplate()
 		attributes.CreateMakefileTemplate()
+		attributes.CreateMainTemplate()
 	} else {
 		fmt.Println("Setting default minimalist config (go.mod, Makefile and main.go)")
 	}
