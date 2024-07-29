@@ -33,7 +33,7 @@ func main() {
 	if project != "" {
 		fmt.Printf("Setting default minimalist config with %s \n", project)
 
-		attributes.CreateRootFolder()
+		attributes.CreateProjectFolder()
 		attributes.CreateGoModTemplate()
 		attributes.CreateMakefileTemplate()
 		attributes.CreateMainTemplate()

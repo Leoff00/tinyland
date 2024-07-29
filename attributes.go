@@ -15,16 +15,33 @@ type FilesAttributes struct {
 	GpUrl string
 }
 
-func (f *FilesAttributes) CreateRootFolder() {
+func (f *FilesAttributes) CreateProjectFolder() {
 	path := fmt.Sprintf("%s/cmd", f.Project)
 	if err := os.MkdirAll(path, 0777); err != nil {
-		fmt.Println(err.Error())
+		fmt.Printf("fail to create folder %s, error: %s\n", f.Project, err.Error())
 	}
 
 	if err := os.Chmod(f.Project, 0777); err != nil {
-		fmt.Println("fail to give perms to tmp", err.Error())
+		fmt.Printf("fail to give perms to %s, error: %s\n", f.Project, err.Error())
+	}
+}
+
+func (f *FilesAttributes) CreateGoModTemplate() {
+	if err := os.Chdir(f.Project); err != nil {
+		fmt.Printf("Fail to enter %s directory, error: %s\n", f.Project, err.Error())
 	}
 
+	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
+		gomodCmd := exec.Command("go", "mod", "init", f.GpUrl)
+		if err := gomodCmd.Run(); err != nil {
+			if err = os.RemoveAll(f.Project); err != nil {
+				fmt.Printf("Error during removing %s directory, error: %s\n", f.Project, err.Error())
+			}
+			log.Panicln("Fail to execute go mod command...", err.Error())
+		}
+	} else {
+		return
+	}
 }
 
 func (f *FilesAttributes) CreateMakefileTemplate() {
@@ -44,25 +61,6 @@ run:
 	if _, err := file.WriteString(t); err != nil {
 		log.Println("Could not write the content in file...", err.Error())
 	}
-
-}
-
-func (f *FilesAttributes) CreateGoModTemplate() {
-	if err := os.Chdir(f.Project); err != nil {
-		log.Panicf("Fail to enter %s directory... %s", f.Project, err.Error())
-	}
-
-	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
-		gomodCmd := exec.Command("go", "mod", "init", f.GpUrl)
-		if err := gomodCmd.Run(); err != nil {
-			if err = os.RemoveAll("tmp"); err != nil {
-				fmt.Printf("Error during removing %s directory... %s", f.Project, err.Error())
-			}
-			log.Panicln("Fail to execute go mod command...", err.Error())
-		}
-	} else {
-		return
-	}
 }
 
 func (f *FilesAttributes) CreateMainTemplate() {
@@ -75,7 +73,7 @@ func main() {
 }`)
 
 	if err := os.Chdir("cmd"); err != nil {
-		os.RemoveAll("tmp")
+		os.RemoveAll(f.Project)
 		log.Panicln("Fail in enter cmd directory...", err.Error())
 	}
 

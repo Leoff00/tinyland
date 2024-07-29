@@ -7,4 +7,4 @@ t:
 bin:
 	@go build -o bin/tinyland
 
-.PHONY: run
+.PHONY: run bin t

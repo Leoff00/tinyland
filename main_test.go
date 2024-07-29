@@ -14,7 +14,7 @@ var (
 	}
 )
 
-func TestCreateTempFolder(t *testing.T) {
+func TestCreateProjectFolder(t *testing.T) {
 	want_cmd := "cmd"
 	custom := fmt.Sprintf("%s/cmd", fa.Project)
 	exist, _ := os.Stat(fa.Project)
@@ -23,7 +23,7 @@ func TestCreateTempFolder(t *testing.T) {
 		os.RemoveAll(fa.Project)
 	}
 
-	fa.CreateRootFolder()
+	fa.CreateProjectFolder()
 	cmd, err := os.Stat(custom)
 
 	if cmd.Name() != want_cmd {
@@ -32,6 +32,7 @@ func TestCreateTempFolder(t *testing.T) {
 
 }
 
+// abs used because in runtime is entering in folder created...
 func TestGoModFile(t *testing.T) {
 	dir, _ := filepath.Abs(".")
 	fullpath := fmt.Sprintf("%s/go.mod", dir)
@@ -45,20 +46,6 @@ func TestGoModFile(t *testing.T) {
 	}
 }
 
-func TestCreateMainFile(t *testing.T) {
-	dir, _ := filepath.Abs(".")
-	fullpath := fmt.Sprintf("%s/cmd/main.go", dir)
-	want_main := "main.go"
-
-	fa.CreateMainTemplate()
-
-	mainFile, err := os.Stat(fullpath)
-	if mainFile.Name() != want_main {
-		t.Error("go mod file wasn't created", err.Error())
-	}
-
-}
-
 func TestCreateMakefile(t *testing.T) {
 	dir, _ := filepath.Abs(".")
 	fullpath := fmt.Sprintf("%s/Makefile", dir)
@@ -69,5 +56,18 @@ func TestCreateMakefile(t *testing.T) {
 
 	if makefile.Name() != want_makefile {
 		t.Error("Makefile wasn't created", err.Error())
+	}
+}
+
+func TestCreateMainFile(t *testing.T) {
+	dir, _ := filepath.Abs(".")
+	fullpath := fmt.Sprintf("%s/cmd/main.go", dir)
+	want_main := "main.go"
+
+	fa.CreateMainTemplate()
+
+	mainFile, err := os.Stat(fullpath)
+	if mainFile.Name() != want_main {
+		t.Error("go mod file wasn't created", err.Error())
 	}
 }
