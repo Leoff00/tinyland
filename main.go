@@ -49,7 +49,6 @@ func main() {
 
 func clearPath(root bool) {
 	if root {
-		os.Chdir("../")
 		if err := os.RemoveAll("cmd"); err != nil {
 			fmt.Println(err)
 		}
