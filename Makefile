@@ -1,6 +1,9 @@
-run:
-	@go run attributes.go main.go -$(dirName)
+PROJECT=tinyland_example
+GPURL=github.com/leoff00/foo
+ROOT=false
 
+run:
+	@go run attributes.go main.go -project $(PROJECT) -gpUrl $(GPURL) -root $(ROOT)
 t:
 	@go test -v 
 

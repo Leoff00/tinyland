@@ -11,6 +11,7 @@ var (
 	fa = FilesAttributes{
 		Project: "foo",
 		GpUrl:   "github.com/leoff00/foo",
+		Root:    true,
 	}
 )
 
@@ -33,6 +34,7 @@ func TestCreateProjectFolder(t *testing.T) {
 }
 
 // abs used because in runtime is entering in folder created...
+
 func TestGoModFile(t *testing.T) {
 	dir, _ := filepath.Abs(".")
 	fullpath := fmt.Sprintf("%s/go.mod", dir)
@@ -60,14 +62,27 @@ func TestCreateMakefile(t *testing.T) {
 }
 
 func TestCreateMainFile(t *testing.T) {
-	dir, _ := filepath.Abs(".")
-	fullpath := fmt.Sprintf("%s/cmd/main.go", dir)
-	want_main := "main.go"
+	if fa.Root {
+		dir, _ := filepath.Abs(".")
+		fullpath := fmt.Sprintf("%s/main.go", dir)
+		want_main := "main.go"
 
-	fa.CreateMainTemplate()
+		fa.CreateMainTemplate()
 
-	mainFile, err := os.Stat(fullpath)
-	if mainFile.Name() != want_main {
-		t.Error("go mod file wasn't created", err.Error())
+		mainFile, err := os.Stat(fullpath)
+		if mainFile.Name() != want_main {
+			t.Error("main file wasn't created", err.Error())
+		}
+	} else {
+		dir, _ := filepath.Abs(".")
+		fullpath := fmt.Sprintf("%s/cmd/main.go", dir)
+		want_main := "main.go"
+
+		fa.CreateMainTemplate()
+
+		mainFile, err := os.Stat(fullpath)
+		if mainFile.Name() != want_main {
+			t.Error("main file wasn't created", err.Error())
+		}
 	}
 }

@@ -13,6 +13,9 @@ type FilesAttributes struct {
 
 	// the github profile url of the user
 	GpUrl string
+
+	// flag to define main.go in root
+	Root bool
 }
 
 func (f *FilesAttributes) CreateProjectFolder() {
@@ -72,20 +75,35 @@ func main() {
 	fmt.Println("hello world")
 }`)
 
-	if err := os.Chdir("cmd"); err != nil {
-		os.RemoveAll(f.Project)
-		log.Panicln("Fail in enter cmd directory...", err.Error())
+	if f.Root {
+		file, err := os.Create("main.go")
+
+		if err != nil {
+			log.Panicln("Erro during create file main.go", err.Error())
+		}
+
+		defer file.Close()
+
+		if _, err := file.WriteString(t); err != nil {
+			log.Println("Could not write the content in file...", err.Error())
+		}
+	} else {
+		if err := os.Chdir("cmd"); err != nil {
+			os.RemoveAll(f.Project)
+			log.Panicln("Fail in enter cmd directory...", err.Error())
+		}
+
+		file, err := os.Create("main.go")
+
+		if err != nil {
+			log.Panicln("Erro during create file main.go", err.Error())
+		}
+
+		defer file.Close()
+
+		if _, err := file.WriteString(t); err != nil {
+			log.Println("Could not write the content in file...", err.Error())
+		}
 	}
 
-	file, err := os.Create("main.go")
-
-	if err != nil {
-		log.Panicln("Erro during create file main.go", err.Error())
-	}
-
-	defer file.Close()
-
-	if _, err := file.WriteString(t); err != nil {
-		log.Println("Could not write the content in file...", err.Error())
-	}
 }
