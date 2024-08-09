@@ -10,7 +10,7 @@ import (
 var (
 	fa = FilesAttributes{
 		Project: "foo",
-		GpUrl:   "github.com/leoff00/foo",
+		Url:     "github.com/leoff00/foo",
 		Root:    true,
 	}
 )

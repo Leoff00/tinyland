@@ -12,7 +12,7 @@ type FilesAttributes struct {
 	Project string
 
 	// the github profile url of the user
-	GpUrl string
+	Url string
 
 	// flag to define main.go in root
 	Root bool
@@ -35,7 +35,7 @@ func (f *FilesAttributes) CreateGoModTemplate() {
 	}
 
 	if _, err := os.Stat("go.mod"); os.IsNotExist(err) {
-		gomodCmd := exec.Command("go", "mod", "init", f.GpUrl)
+		gomodCmd := exec.Command("go", "mod", "init", f.Url)
 		if err := gomodCmd.Run(); err != nil {
 			if err = os.RemoveAll(f.Project); err != nil {
 				fmt.Printf("Error during removing %s directory, error: %s\n", f.Project, err.Error())
@@ -87,6 +87,7 @@ func main() {
 		if _, err := file.WriteString(t); err != nil {
 			log.Println("Could not write the content in file...", err.Error())
 		}
+
 	} else {
 		if err := os.Chdir("cmd"); err != nil {
 			os.RemoveAll(f.Project)
